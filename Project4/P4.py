@@ -14,7 +14,7 @@ from keras.layers.pooling import MaxPooling2D
 from P4_helper import *
 
 # Load dataset
-base_path = r"/Users/dhtran/Downloads/data/"
+base_path = r"/Users/dhtran/Documents/Code/Udacity/Self-Driving-Car-Nanodegree/P4-Behavioral-Cloning/data1/"
 dataset_orig = pd.read_csv(base_path + r"driving_log.csv")
 dataset = dataset_orig.iloc[:,:4].values
 
@@ -27,7 +27,7 @@ valid_generator = generator(base_path, valid_dataset, batch_size=32)
 # ================================== NVDIA Model ==================================
 model = Sequential()
 model.add(Lambda(lambda x: (x/255.0)-0.5, input_shape=(160,320,3)))       # Normalization and mean centered
-model.add(Cropping2D(cropping=((50,20),(0,0))))    # crops 50 rows pixels from top and 20 rows pixels from bottom
+model.add(Cropping2D(cropping=((65,20),(0,0))))    # crops 65 rows pixels from top and 20 rows pixels from bottom
 
 model.add(Convolution2D(filters=24, kernel_size=(5,5), strides=(2,2), activation='relu'))
 model.add(MaxPooling2D(pool_size=(1, 1)))
@@ -83,3 +83,14 @@ plt.show()
 
 # Save model
 model.save('P4_model.h5')
+
+'''
+del model
+
+from keras.models import load_model
+# Reload model
+model = load_model('P4_model.h5')
+
+# Continue training
+model.fit(...)
+'''

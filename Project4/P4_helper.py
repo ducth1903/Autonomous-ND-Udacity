@@ -17,26 +17,33 @@ def read_img(base_path, batch_sample, pos):
 # counter_clockwise: car moves in counter clockwise or clockwise
 # if counter clockwise -> steer more to the left
 # if clockwise -> steer more to the right
-def read_steer_angle(batch_sample, counter_clockwise=True):
-    correction = 0.2        # parameter to tune!
+def read_steer_angle(batch_sample, side_cameras, counter_clockwise=True):
+    correction = 0.1        # parameter to tune!
     center_steer = float(batch_sample[3])
-    if counter_clockwise:
-        # steer more to LEFT
-        left_steer = center_steer + correction
-        right_steer = center_steer - correction
+    if side_cameras:
+        if counter_clockwise:
+            # steer more to LEFT
+            left_steer = center_steer + correction
+            right_steer = center_steer - correction
+        else:
+            # steer more to RIGHT
+            center_steer = center_steer * (-1)
+            left_steer = center_steer - correction
+            right_steer = center_steer + correction
+        
+        return (center_steer, left_steer, right_steer)
     else:
-        # steer more to RIGHT
-        center_steer = center_steer * (-1)
-        left_steer = center_steer - correction
-        right_steer = center_steer + correction
-
-    return center_steer, left_steer, right_steer
+        return center_steer
 
 
 # Generators (large amounts of data!)
 # Pre-process data on the fly without storing in memory -> memory efficient
 # Keyword: yield
 def generator(base_path, samples, batch_size=32):
+    # Flag to decide if using side images and steer angles
+    # if not, only use center image and center steer angle
+    side_cameras = False
+
     num_samples = len(samples)
     while 1:        # loop forever so the generator never terminates
         shuffle(samples)
@@ -46,16 +53,20 @@ def generator(base_path, samples, batch_size=32):
             for batch_sample in batch_samples:
                 # Load images for center/left/right
                 center_img = read_img(base_path, batch_sample, pos=0)
-                left_img = read_img(base_path, batch_sample, pos=1)
-                right_img = read_img(base_path, batch_sample, pos=2)
+                if side_cameras:
+                    left_img = read_img(base_path, batch_sample, pos=1)
+                    right_img = read_img(base_path, batch_sample, pos=2)
 
                 # Load angles for center/left/right
-                center_steer, left_steer, right_steer = read_steer_angle(
-                    batch_sample, counter_clockwise=True)
+                steer_angles = read_steer_angle(batch_sample, side_cameras, counter_clockwise=True)
 
-                images.extend([center_img, left_img, right_img])
-                angles.extend([center_steer, left_steer, right_steer])
-
+                if side_cameras:
+                    images.extend([center_img, left_img, right_img])
+                    angles.extend([steer_angles[0], steer_angles[1], steer_angles[2]])
+                else:
+                    images.append(center_img)
+                    angles.append(steer_angles)
+            print(len(images))
             # trim images to only see section with road ???
             X = np.array(images)
             y = np.array(angles)
