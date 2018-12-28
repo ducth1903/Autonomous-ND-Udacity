@@ -12,5 +12,11 @@ int main() {
 
     int myInt = 1234;
     cout << "The value is " << myInt << endl;
+
+    // Enumerate constants (create a new variable type and assign a finite number of values to it)
+    enum MONTH {Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec};
+    MONTH myMonth = Mar;
+    cout << "My month is " << myMonth << endl;
+    
     return 0;
 }
