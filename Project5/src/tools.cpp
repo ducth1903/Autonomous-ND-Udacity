@@ -1,6 +1,6 @@
 #include "tools.h"
 #include <iostream>
-#include <cmath>
+#include <math.h>
 
 using Eigen::VectorXd;
 using Eigen::MatrixXd;
@@ -56,9 +56,11 @@ MatrixXd Tools::CalculateJacobian(const VectorXd& x_state) {
       return Hj; 
    }
 
-   Hj << px/sqrt(denom), py/sqrt(denom), 0, 0,
+   float sqrt_denom = sqrt(denom);
+   float denom_3over2 = pow(denom, 3/2);
+   Hj << px/sqrt_denom, py/sqrt_denom, 0, 0,
          -py/denom, px/denom, 0, 0,
-         py*(vx*py-vy*px)/pow(denom, 3/2), px*(vy*px-vx*py)/pow(denom, 3/2), px/sqrt(denom), py/sqrt(denom);
+         py*(vx*py-vy*px)/denom_3over2, px*(vy*px-vx*py)/denom_3over2, px/sqrt_denom, py/sqrt_denom;
    
    return Hj;
 }

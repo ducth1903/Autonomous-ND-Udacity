@@ -2,6 +2,11 @@
 #define KALMAN_FILTER_H_
 
 #include "Eigen/Dense"
+#include <cmath>
+
+#define _USE_MATH_DEFINES
+
+float normalize_theta_radar(const Eigen::VectorXd y);
 
 class KalmanFilter {
  public:
@@ -65,6 +70,7 @@ class KalmanFilter {
   // measurement covariance matrix
   Eigen::MatrixXd R_laser_;
   Eigen::MatrixXd R_radar_;
+
 };
 
 #endif // KALMAN_FILTER_H_
