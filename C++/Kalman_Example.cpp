@@ -1,6 +1,7 @@
 #include <iostream>
 #include "Eigen/Dense"
 #include <vector>
+#include <typeinfo>
 
 // Bad practice to use namespace std (https://stackoverflow.com/questions/1452721/why-is-using-namespace-std-considered-bad-practice)
 // using namespace std;
@@ -62,6 +63,9 @@ int main()
     // Kalman filter algorithm
     filter(x, P);
 
+    // Tutorial
+    tutorial();
+
     return 0;
 }
 
@@ -118,4 +122,12 @@ void tutorial()
     MatrixXd sq_matrix_inv = sq_matrix.inverse();
     cout << "Square matrix: " << sq_matrix << endl;
     cout << "Inverse: " << sq_matrix_inv << endl;
+
+    VectorXd e(4);
+    e << 4,3,2,1;
+    VectorXd g(4);
+    g << 1,2,3,4;
+    VectorXd res = (e-g).array().square().matrix();
+    float sumRes = res.sum();
+    cout << "res = " << res << endl << "sumRes = " << sumRes << endl;
 }
