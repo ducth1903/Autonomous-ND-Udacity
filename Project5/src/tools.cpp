@@ -57,7 +57,7 @@ MatrixXd Tools::CalculateJacobian(const VectorXd& x_state) {
    }
 
    float sqrt_denom = sqrt(denom);
-   float denom_3over2 = pow(denom, 3/2);
+   float denom_3over2 = denom*sqrt_denom;       // denom^(3/2)
    Hj << px/sqrt_denom, py/sqrt_denom, 0, 0,
          -py/denom, px/denom, 0, 0,
          py*(vx*py-vy*px)/denom_3over2, px*(vy*px-vx*py)/denom_3over2, px/sqrt_denom, py/sqrt_denom;

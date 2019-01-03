@@ -55,9 +55,9 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
 
   VectorXd h(3);
   h << sqrt(px*px + py*py),
-      atan(py/px),
+      atan2(py,px),        // atan2() returns radian in range [-pi, pi]
       (px*vx+py*vy)/sqrt(px*px+py*py);
-
+  
   VectorXd y = z - h;
   // Make sure theta is normalized between (-pi, pi)
   y(1) = normalize_theta_radar(y);
@@ -76,10 +76,10 @@ float normalize_theta_radar(const Eigen::VectorXd y)
   float theta = y(1);
   while(1) {
     if (theta > M_PI) {
-      theta -= M_PI;
+      theta -= 2*M_PI;
     } 
     else if(theta < -M_PI) {
-      theta += M_PI;
+      theta += 2*M_PI;
     }
     else {
       break;
